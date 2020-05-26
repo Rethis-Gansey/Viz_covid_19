@@ -1,1 +1,78 @@
-Bienvenue
+### Les packages nécessaires pour les différentes manipulations
+library(readxl)
+library(ggplot2)
+library(ggmap)
+library(animation)
+library(gganimate)
+
+### Importer la base de données et la nommer "c_viz"
+
+### On sélectionne les données à partir du 15-03-2020
+c_viz1<-c_viz[which(c_viz$date > "2020-03-15"),]
+### On sélectionne les données du Bénin uniquement
+corona_viz<-c_viz1[which(c_viz1$Country.Region=="Benin"),]
+
+### graphique montrant l'évolution du nombre de cas confirmés du COVID-19 au bénin 
+graph_confirm<-ggplot(corona_viz[corona_viz$type=="confirmed",], aes(date, cases))+geom_line(color="#FC4E07", size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de cas confirmés \n du Covid-19 au Bénin jusqu'au 12-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_confirm+geom_point()+transition_reveal(date) ### transition_reveal permet d'animer le graphe en fonction de la date
+### Sauvegarde du graphique
+anim_save("coviz_confirmed.gif")
+
+### graphique montrant l'évolution du nombre de décès du COVID-19 au bénin 
+graph_death<-ggplot(corona_viz[corona_viz$type=="death",], aes(date, cases))+geom_line(color="#FC4E07", size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de décès \n dûs au Covid-19 au Bénin jusqu'au 12-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_death+geom_point()+transition_reveal(date)
+### Sauvegarde du graphique
+anim_save("coviz_death.gif")
+
+### graphique montrant l'évolution du nombre de cas guéris du COVID-19 au bénin 
+graph_recovered<-ggplot(corona_viz[corona_viz$type=="recovered",], aes(date, cases))+geom_line(color="#FC4E07", size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de cas guérir du \n Covid-19 au Bénin jusqu'au 12-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_recovered+geom_point()+transition_reveal(date)
+### Sauvegarde du graphique
+anim_save("coviz_recovered.gif")
+
+### graphique montrant l'évolution du nombre de cas confirmés, guéris et décédés du COVID-19 au bénin 
+graph_all_type<-ggplot(corona_viz, aes(date, cases,group=type, color= factor(type)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de cas confirmés, guérir \n et décédés  du Covid-19 au Bénin jusqu'au 12-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_all_type+geom_point()+transition_reveal(date)
+### Sauvegarde du graphique
+anim_save("coviz_all_type.gif")
+
+
+### On sélectionne le Bénin et ses pays limitrophes 
+c_viz_limitroph_country<-c_viz[which(c_viz$lim == "limitroph"),]
+### On fait un filtre sur la date, on commence par le 27-02-2020
+c_viz_limitroph_country_date<-c_viz_limitroph_country[which(c_viz_limitroph_country$date > "2020-02-27" ),]
+
+
+graph_limitroph_confirm<-ggplot(c_viz_limitroph_country_date[c_viz_limitroph_country_date$type=="confirmed",], aes(x=date, y=cases, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de cas confirmés du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_confirm+geom_point()+transition_reveal(date)
+anim_save("coviz_limitroph_confirmed.gif")
+
+
+graph_limitroph_death<-ggplot(c_viz_limitroph_country_date[c_viz_limitroph_country_date$type=="death",], aes(x=date, y=cases, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de décès du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_death+geom_point()+transition_reveal(date)
+anim_save("coviz_limitroph_death.gif")
+
+graph_limitroph_recovered<-ggplot(c_viz_limitroph_country_date[c_viz_limitroph_country_date$type=="recovered",], aes(x=date, y=cases, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du nombre de cas guéris du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_recovered+geom_point()+transition_reveal(date)
+anim_save("coviz_limitroph_recovered.gif")
+
+#############################
+##  Graphiques sur les cumuls
+
+graph_limitroph_confirm_cumul<-ggplot(c_viz_limitroph_country_date[c_viz_limitroph_country_date$type=="confirmed",], aes(x=date, y=cumul, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du cumul des cas confirmés du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif cumulé", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_confirm_cumul+geom_point()+transition_reveal(date)
+anim_save("coviz_limitroph_confirmed_cumul.gif")
+
+graph_limitroph_death_cumul<-ggplot(c_viz_limitroph_country_date[c_viz_limitroph_country_date$type=="death",], aes(x=date, y=cumul, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du cumul des décès du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif cumulé", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_death_cumul+geom_point()+transition_reveal(date)
+anim_save("coviz_limitroph_death_cumul.gif")
+
+graph_limitroph_recovered_cumul<-ggplot(c_viz_limitroph_country_date[c_viz_limitroph_country_date$type=="recovered",], aes(x=date, y=cumul, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du cumul des cas guéris du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif cumulé", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_recovered_cumul+geom_point()+transition_reveal(date)
+anim_save("coviz_limitroph_recovered_cumul.gif")
+
+graph_limitroph_cumul<-ggplot(c_viz_limitroph_country_date, aes(x=date, y=cumul, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du cumul des cas guéris du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif cumulé", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
+graph_limitroph_cumul+geom_point()+facet_wrap(~c_viz_limitroph_country_date$type)+transition_reveal(date)
+anim_save("coviz_limitroph_cumul.gif")
+
+
