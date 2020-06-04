@@ -81,10 +81,7 @@ anim_save("coviz_limitroph_cumul.gif")
 ### Conception de la carte dynamique
 ### Importer la base "base_coviz"
 
-base_covid19<-base_coviz[base_coviz$Confirmed>0,] #on sélectionne les pays à partir de la date d'enrégistrement du premier cas confirmé
- 
-
-cov<-leaflet(base_covid19) %>% 
+leaflet(base_coviz) %>% 
   ### On charge la carte avec un fond noir
   addTiles("http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
                                               attribution = paste(                                                              
@@ -92,6 +89,4 @@ cov<-leaflet(base_covid19) %>%
                                                 "&copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>"               
                                               ))%>% 
   ### On localise chaque pays par ses coordonnées géographiques et on dynamise le cumul du nombre de cas en fonction de la date
-  addMinicharts(base_covid19$Long, base_covid19$Lag, chartdata = base_covid19$Confirmed*0.0001, width = 45, showLabels = TRUE, fillColor  = "red", time = base_covid19$Report_Date_String)
-
-
+  addMinicharts(base_covid19$Long, base_covid19$Lag, chartdata = base_covid19$Confirmed*0.0001, width = 45, showLabels = TRUE,legend = TRUE, fillColor  = "red", time = base_covid19$Report_Date_String)
