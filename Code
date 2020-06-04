@@ -1,9 +1,11 @@
 ### Les packages nécessaires pour les différentes manipulations
 library(readxl)
+library(readr)
 library(ggplot2)
-library(ggmap)
 library(animation)
 library(gganimate)
+library(leaflet)
+library(leaflet.minicharts)
 
 ### Importer la base de données et la nommer "c_viz"
 
@@ -74,5 +76,22 @@ anim_save("coviz_limitroph_recovered_cumul.gif")
 graph_limitroph_cumul<-ggplot(c_viz_limitroph_country_date, aes(x=date, y=cumul, group=Country.Region, color= factor(Country.Region)))+geom_line(size=1)+ scale_color_viridis_d()+labs(title="Evolution du cumul des cas guéris du Covid-19 \n au Bénin et dans ses  pays limitrophes \n jusqu'au 14-05-2020", x="Date", y="Effectif cumulé", caption = "Made by Rethis Gansey")+theme(legend.position = "top", plot.title = element_text(color = "red", size = 14, face = "bold", hjust = 0.5), axis.title.x = element_text(color = "blue", size = 12, face="bold"), axis.title.y= element_text(color = "blue", size= 12, face="bold"))
 graph_limitroph_cumul+geom_point()+facet_wrap(~c_viz_limitroph_country_date$type)+transition_reveal(date)
 anim_save("coviz_limitroph_cumul.gif")
+
+################################################################
+### Conception de la carte dynamique
+### Importer la base "base_coviz"
+
+base_covid19<-base_coviz[base_coviz$Confirmed>0,] #on sélectionne les pays à partir de la date d'enrégistrement du premier cas confirmé
+ 
+
+cov<-leaflet(base_covid19) %>% 
+  ### On charge la carte avec un fond noir
+  addTiles("http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+                                              attribution = paste(                                                              
+                                                "&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors",   
+                                                "&copy; <a href=\"http://cartodb.com/attributions\">CartoDB</a>"               
+                                              ))%>% 
+  ### On localise chaque pays par ses coordonnées géographiques et on dynamise le cumul du nombre de cas en fonction de la date
+  addMinicharts(base_covid19$Long, base_covid19$Lag, chartdata = base_covid19$Confirmed*0.0001, width = 45, showLabels = TRUE, fillColor  = "red", time = base_covid19$Report_Date_String)
 
 
